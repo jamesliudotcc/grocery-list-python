@@ -41,3 +41,11 @@ class House(models.Model):
     items = models.ManyToManyField(Item, blank=True, related_name="houses")
     faveStores = models.ManyToManyField(Store, blank=True, related_name="houses")
 
+
+class Token(models.Model):
+    def __str__(self):
+        return
+
+    token = models.CharField(max_length=20)
+    email = models.CharField(max_length=50)
+    house = models.ForeignKey(House, on_delete=models.CASCADE)

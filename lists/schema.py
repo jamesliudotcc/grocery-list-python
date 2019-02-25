@@ -27,21 +27,44 @@ class HouseType(DjangoObjectType):
 
 class Query(graphene.ObjectType):
     links = graphene.List(LinkType)
-    stores = graphene.List(StoreType)
-    items = graphene.List(ItemType)
-    houses = graphene.List(HouseType)
+
+    store = graphene.Field(StoreType, id=graphene.Int())
+    item = graphene.Field(ItemType, id=graphene.Int())
+    house = graphene.Field(HouseType, id=graphene.Int())
+
+    stores = graphene.List(StoreType, id=graphene.Int())
+    items = graphene.List(ItemType, id=graphene.Int())
+    houses = graphene.List(HouseType, id=graphene.Int())
 
     def resolve_links(self, info, **kwargs):
         return Link.objects.all()
 
     def resolve_stores(self, info, **kwargs):
+
         return Store.objects.all()
 
     def resolve_items(self, info, **kwargs):
+
         return Item.objects.all()
 
     def resolve_houses(self, info, **kwargs):
+
         return House.objects.all()
+
+    def resolve_store(self, info, **kwargs):
+        id = kwargs.get("id")
+        if id is not None:
+            return Store.objects.get(pk=id)
+
+    def resolve_item(self, info, **kwargs):
+        id = kwargs.get("id")
+        if id is not None:
+            return Item.objects.get(pk=id)
+
+    def resolve_house(self, info, **kwargs):
+        id = kwargs.get("id")
+        if id is not None:
+            return House.objects.get(pk=id)
 
 
 class CreateLink(graphene.Mutation):
