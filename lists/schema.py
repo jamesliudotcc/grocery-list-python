@@ -34,6 +34,15 @@ class Query(graphene.ObjectType):
     def resolve_links(self, info, **kwargs):
         return Link.objects.all()
 
+    def resolve_stores(self, info, **kwargs):
+        return Store.objects.all()
+
+    def resolve_items(self, info, **kwargs):
+        return Item.objects.all()
+
+    def resolve_houses(self, info, **kwargs):
+        return House.objects.all()
+
 
 class CreateLink(graphene.Mutation):
     id = graphene.Int()
