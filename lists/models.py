@@ -42,10 +42,12 @@ class House(models.Model):
     faveStores = models.ManyToManyField(Store, blank=True, related_name="houses")
 
 
-class Token(models.Model):
+class Invite(models.Model):
     def __str__(self):
-        return
+        return f"Token for {self.first_name}"
 
     token = models.CharField(max_length=20)
+    first_name = models.CharField(max_length=50)
+    last_name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
