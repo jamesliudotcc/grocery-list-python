@@ -51,3 +51,4 @@ class Invite(models.Model):
     last_name = models.CharField(max_length=50)
     email = models.CharField(max_length=50)
     house = models.ForeignKey(House, on_delete=models.CASCADE)
+    created = models.DateField(auto_now_add=True)

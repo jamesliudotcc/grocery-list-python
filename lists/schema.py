@@ -1,3 +1,4 @@
+import datetime
 import graphene
 from graphene_django import DjangoObjectType
 from users.schema import UserType
@@ -91,5 +92,64 @@ class CreateLink(graphene.Mutation):
         )
 
 
+class CreateItem(graphene.Mutation):
+    id = graphene.Int()
+    house = graphene.Int()
+    name = graphene.String()
+    qty = graphene.Int()
+    stores = graphene.List(graphene.Int)
+
+    class Arguments:
+        house = graphene.Int()
+        name = graphene.String()
+        qty = graphene.Int()
+        stores = graphene.List(graphene.Int)
+
+    def mutate(self, info, house, name, qty, stores):
+        user = info.context.user or None
+        # Only allow items to be added by house members
+        house_for_item = House.objects.get(id=house)
+        print(house_for_item)
+
+        item = Item(name=name, qty=qty)
+        item.save()
+        item.houses.add(house_for_item)
+
+        for store in stores:
+            store_for_item = Store.objects.get(id=store)
+            print(store_for_item)
+            item.stores.add(store_for_item)
+
+        # Fix by passing in object type correctly instead of this hack with integers
+        return CreateItem(
+            id=item.id,
+            # house=item.houses.id,
+            name=item.name,
+            qty=item.qty,
+            # stores=item.stores,
+        )
+
+
+class PurchaseItem(graphene.Mutation):
+    ids = graphene.List(graphene.Int)
+
+    class Arguments:
+        ids = graphene.List(graphene.Int)
+
+    def mutate(self, info, ids):
+        user = info.context.user or None
+        now = datetime.datetime.utcnow()
+
+        for each_id in ids:
+            item = Item.objects.get(id=each_id)
+            item.bought = now
+            item.bought_by = user
+            item.save()
+
+        return PurchaseItem(ids=ids)
+
+
 class Mutation(graphene.ObjectType):
     create_link = CreateLink.Field()
+    create_item = CreateItem.Field()
+    purchase_item = PurchaseItem.Field()
